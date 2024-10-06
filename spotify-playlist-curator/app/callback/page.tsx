@@ -1,34 +1,30 @@
 // src/app/callback/page.tsx
-'use client';
-import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { exchangeToken, initiateSpotifyAuth } from "@/lib/spotifyAuth";
+"use client";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { exchangeToken } from "@/lib/spotifyAuth";
 
 export default function Callback() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = new URLSearchParams(window.location.search); // Get the query params
+  const code = searchParams.get("code");
 
   useEffect(() => {
-    const code = searchParams.get('code');
-
     if (code) {
       exchangeToken(code)
-        .then(() => {
-          router.push('/');
+        .then((tokenData) => {
+          // Store the access token in localStorage
+          localStorage.setItem("access_token", tokenData.access_token);
+          if (tokenData.refresh_token) {
+            localStorage.setItem("refresh_token", tokenData.refresh_token);
+          }
+          router.push("/"); // Redirect to the homepage after successful token exchange
         })
-        .catch((error) => {
-          console.error('Authentication error:', error);
-          router.push('/?error=authentication_failed');
+        .catch((err) => {
+          console.error("Error during token exchange", err);
         });
     }
-  }, [searchParams, router]);
+  }, [code, router]);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h2 className="text-2xl font-semibold mb-4">Connecting to Spotify...</h2>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
-      </div>
-    </div>
-  );
+  return <p>Authenticating...</p>;
 }

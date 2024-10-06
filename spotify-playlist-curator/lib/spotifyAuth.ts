@@ -21,14 +21,6 @@ export const generateRandomString = (length: number): string => {
       .replace(/\//g, '_');
   };
 
-  const getEnvVariable = (key: string): string => {
-    const value = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
-    if (!value) {
-      throw new Error(`Missing environment variable: ${key}`);
-    }
-    return value;
-  };
-
   // Environment variables interface
   interface SpotifyConfig {
     clientId: string;
@@ -38,8 +30,8 @@ export const generateRandomString = (length: number): string => {
 
   // Spotify configuration with environment variables
   export const spotifyConfig: SpotifyConfig = {
-    clientId: getEnvVariable('NEXT_PUBLIC_SPOTIFY_CLIENT_ID'),
-    redirectUri: getEnvVariable('NEXT_PUBLIC_SPOTIFY_REDIRECT_URI'),
+    clientId: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID as string,
+    redirectUri: process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI as string,
     scope: 'user-library-read playlist-modify-public playlist-modify-private',
   };
 
