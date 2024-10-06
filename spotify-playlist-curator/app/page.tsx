@@ -61,7 +61,7 @@ export default function Home() {
                 Generate Playlist
               </button>
               {error && <p className="text-red-500">{error}</p>}
-              {tracks.length > 0 && (
+              {/* {tracks.length > 0 && (
                 <ul className="mt-4">
                   {tracks.map((track) => (
                     <li key={track.track.id}>
@@ -69,7 +69,7 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-              )}
+              )} */}
             </div>
           )}
         </div>

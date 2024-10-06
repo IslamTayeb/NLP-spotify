@@ -13,44 +13,47 @@ interface Track {
 
 // getLikedTracks function
 export const getLikedTracks = async (): Promise<Track[]> => {
-    let accessToken = localStorage.getItem("access_token");
+  let accessToken = localStorage.getItem("access_token");
 
-    if (!accessToken) {
-      throw new Error("No access token found");
+  if (!accessToken) {
+    throw new Error("No access token found");
+  }
+
+  let allTracks: Track[] = [];
+  let nextUrl = 'https://api.spotify.com/v1/me/tracks?limit=50'; // Initial URL
+
+  try {
+    while (nextUrl) {
+      const response = await axios.get(nextUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = response.data;
+      allTracks = [...allTracks, ...data.items];
+      nextUrl = data.next;
     }
 
-    let allTracks: Track[] = []; // Explicitly define type for allTracks
-    let nextUrl = 'https://api.spotify.com/v1/me/tracks?limit=50'; // Initial URL
+    // Save all tracks to localStorage as a JSON string
+    localStorage.setItem("liked_tracks", JSON.stringify(allTracks));
 
-    try {
-      while (nextUrl) {
-        const response = await axios.get(nextUrl, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        const data = response.data;
-        allTracks = [...allTracks, ...data.items]; // Append fetched tracks to allTracks
-        nextUrl = data.next; // Update nextUrl for the next batch of results
+    // console.log("All liked tracks saved to localStorage:", allTracks);
+    return allTracks;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        console.warn("Access token expired, refreshing...");
+        accessToken = await refreshAccessToken();
+        return await getLikedTracks();
       }
-
-      console.log("All liked tracks:", allTracks); // Log all liked tracks
-      return allTracks; // Return the entire liked tracks array
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          console.warn("Access token expired, refreshing...");
-          accessToken = await refreshAccessToken();
-          return await getLikedTracks(); // Retry after refreshing token
-        }
-        console.error("Error fetching liked tracks:", error.message);
-      } else {
-        console.error("An unknown error occurred:", error);
-      }
-      throw error; // Properly rethrow the error
+      console.error("Error fetching liked tracks:", error.message);
+    } else {
+      console.error("An unknown error occurred:", error);
     }
-  };
+    throw error;
+  }
+};
 
 const refreshAccessToken = async () => {
     const refreshToken = localStorage.getItem("refresh_token");
