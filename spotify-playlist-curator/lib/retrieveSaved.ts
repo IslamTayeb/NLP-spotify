@@ -1,62 +1,63 @@
-// utils/spotify.ts
 import axios from 'axios';
-import { spotifyConfig } from './spotifyAuth';
+import { initiateSpotifyAuth, spotifyConfig } from './spotifyAuth';
 
 // Define the Track interface
 interface Track {
     track: {
-      id: string;
-      name: string;
-      artists: { name: string }[];
+        id: string;
+        name: string;
+        artists: { name: string }[];
     };
-  }
+}
 
 // getLikedTracks function
 export const getLikedTracks = async (): Promise<Track[]> => {
-  let accessToken = localStorage.getItem("access_token");
+    let accessToken = localStorage.getItem("access_token");
 
-  if (!accessToken) {
-    throw new Error("No access token found");
-  }
-
-  let allTracks: Track[] = [];
-  let nextUrl = 'https://api.spotify.com/v1/me/tracks?limit=50'; // Initial URL
-
-  try {
-    while (nextUrl) {
-      const response = await axios.get(nextUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const data = response.data;
-      allTracks = [...allTracks, ...data.items];
-      nextUrl = data.next;
+    if (!accessToken) {
+        throw new Error("No access token found");
     }
 
-    // Save all tracks to localStorage as a JSON string
-    localStorage.setItem("liked_tracks", JSON.stringify(allTracks));
+    let allTracks: Track[] = [];
+    let nextUrl = 'https://api.spotify.com/v1/me/tracks?limit=50'; // Initial URL
 
-    // console.log("All liked tracks saved to localStorage:", allTracks);
-    return allTracks;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 401) {
-        console.warn("Access token expired, refreshing...");
-        accessToken = await refreshAccessToken();
-        return await getLikedTracks();
-      }
-      console.error("Error fetching liked tracks:", error.message);
-    } else {
-      console.error("An unknown error occurred:", error);
+    try {
+        while (nextUrl) {
+            const response = await axios.get(nextUrl, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            const data = response.data;
+            allTracks = [...allTracks, ...data.items];
+            nextUrl = data.next;
+        }
+
+        // Save all tracks to localStorage as a JSON string
+        localStorage.setItem("liked_tracks", JSON.stringify(allTracks));
+
+        console.log("All liked tracks saved to localStorage:");
+        return allTracks;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            if (error.response?.status === 401) {
+                console.warn("Access token expired, refreshing...");
+                accessToken = await refreshAccessToken();
+                return await getLikedTracks();
+            }
+            console.error("Error fetching liked tracks:", error.message);
+        } else {
+            console.error("An unknown error occurred:", error);
+        }
+        throw error;
     }
-    throw error;
-  }
 };
 
 const refreshAccessToken = async () => {
     const refreshToken = localStorage.getItem("refresh_token");
+    console.log("Attempting to refresh token using:", refreshToken);
+
     if (!refreshToken) {
         throw new Error("No refresh token found");
     }
@@ -76,9 +77,15 @@ const refreshAccessToken = async () => {
     const data = await response.json();
 
     if (!response.ok) {
+        if (data.error === "invalid_grant") {
+            console.warn("Refresh token invalid or expired. Reauthenticating...");
+            initiateSpotifyAuth(); // Redirect to login to reauthorize the user
+        }
         throw new Error(data.error || 'Failed to refresh token');
     }
 
-    localStorage.setItem('access_token', data.access_token); // Update access token
+    // Update the access token in localStorage
+    localStorage.setItem('access_token', data.access_token);
+
     return data.access_token;
 };
