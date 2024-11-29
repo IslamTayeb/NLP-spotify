@@ -2,22 +2,27 @@
 
 ## 1. Project Overview
 
-This project uses Natural Language Processing (NLP) to create Spotify playlists based on a user's textual description of their desired mood and their existing Spotify liked songs. The backend, written in Python, utilizes the Google Gemini API for NLP analysis and a custom similarity algorithm to match the user's description with the audio features of their saved tracks. The frontend is built with Next.js and provides a user-friendly interface.  The application fetches the user's liked songs, analyzes a user-provided text description, and returns a list of track IDs representing the generated playlist.  Currently, the generated playlist is not displayed in the UI, but the backend logic is complete.
+This project leverages Natural Language Processing (NLP) to generate Spotify playlists based on a user's textual description of their desired mood and their existing Spotify liked songs. The system consists of a Python backend and a Next.js frontend.
+
+The backend, residing in the `spotify-playlist-curator/lib/python` directory, uses the Google Gemini API for NLP analysis to extract audio features and relevant genres from the user's description. A custom similarity algorithm then compares these features with the audio features of the user's saved tracks (fetched via the Spotify API).  The backend, built with FastAPI, returns a JSON response containing the analyzed audio features, suggested genres, and a list of matching track IDs.
+
+The frontend, located in the root `spotify-playlist-curator` directory, provides a user-friendly interface built with Next.js and styled with Tailwind CSS. It handles Spotify authentication (Authorization Code Flow with PKCE), retrieves the user's liked songs, and sends the playlist description and track data to the backend for processing. Currently, the generated playlist is only returned as JSON data and not visually displayed in the UI.
 
 
 ## 2. Main Features and Functionality
 
-* **Spotify Authentication:** Securely connects to the user's Spotify account using the Authorization Code Flow with PKCE.
-* **Liked Tracks Retrieval:** Efficiently retrieves all the user's saved tracks from their Spotify library, handling pagination and token refresh.
-* **NLP-driven Playlist Generation:** Accepts a user-provided text description of their desired playlist mood.  This description is sent to the Python backend for analysis using the Google Gemini API.
-* **Audio Feature Matching:** A custom algorithm in the Python backend compares the extracted audio features from the NLP analysis with the audio features of the user's liked tracks.  Tracks are scored based on a weighted similarity metric.
-* **Playlist Generation:**  The backend generates a playlist of track IDs based on the similarity scores.  This playlist is currently returned as JSON data (not yet displayed on the frontend).
-* **Frontend (Next.js):** A user-friendly interface for connecting to Spotify and inputting the playlist description.  Uses Tailwind CSS for styling.
+* **Secure Spotify Authentication:**  Utilizes the Authorization Code Flow with PKCE for secure connection to the user's Spotify account.  Handles both access token retrieval and refresh token management for long-term access.
+* **Efficient Liked Tracks Retrieval:**  Fetches all the user's saved tracks from their Spotify library, efficiently handling pagination to accommodate large libraries.
+* **NLP-powered Playlist Mood Analysis:**  Processes a user-supplied text description (e.g., "energetic workout playlist") using the Google Gemini API to extract audio features representing the desired mood.
+* **Custom Audio Feature Matching Algorithm:**  A sophisticated algorithm in the Python backend compares the extracted audio features from the NLP analysis with the audio features of the user's saved tracks.  Tracks are ranked based on a weighted similarity score, prioritizing features like energy and valence.
+* **Playlist ID Generation:** The backend generates a playlist of track IDs based on the similarity scores and returns this list in the JSON response.
+* **Intuitive Next.js Frontend:** Provides a clean and easy-to-use interface for users to connect their Spotify account and input their playlist description.
+* **Dark Mode Support:**  The application automatically adapts to the user's system's preferred color scheme.
 
 
 ## 3. Setup and Installation Instructions
 
-This project requires Node.js (version 16 or higher recommended) and Python 3.10+.  A virtual environment is strongly recommended for managing Python dependencies.
+This project requires Node.js (version 16 or higher recommended) and Python 3.10+. A virtual environment is highly recommended for managing Python dependencies.
 
 **Backend (Python):**
 
@@ -46,7 +51,7 @@ This project requires Node.js (version 16 or higher recommended) and Python 3.10
 5. **Set GOOGLE_API_KEY:** Create a `.env` file in the `spotify-playlist-curator/lib/python` directory and add your Google Gemini API key:
    ```
    GOOGLE_API_KEY=<your_api_key>
-   ```
+   ```  (Replace `<your_api_key>` with your actual key).
 
 **Frontend (Next.js):**
 
@@ -55,7 +60,7 @@ This project requires Node.js (version 16 or higher recommended) and Python 3.10
    cd ../../..
    ```
 
-2. **Install Node.js dependencies:**  Choose one of the following package managers:
+2. **Install Node.js dependencies:** Choose your preferred package manager:
    ```bash
    npm install
    # or
@@ -93,20 +98,21 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 1. Open [http://localhost:3000](http://localhost:3000) in your browser.
 2. Click "Connect with Spotify" to authenticate. You will be redirected to Spotify for authorization.
-3. After successful connection, enter a sentence describing your desired playlist mood in the text area.
-4. Click "Generate Playlist". The application will fetch your liked tracks and send the description and track data to the backend for processing. The generated playlist (a list of track IDs) will be returned by the server (currently not displayed in the UI).
+3. After successful authorization, enter a sentence describing your desired playlist mood in the text area (e.g., "chill lofi beats for studying").
+4. Click "Generate Playlist". The application will fetch your liked songs and send the description and track data to the backend for processing.
+5. The backend will return a JSON response containing the analyzed mood, suggested genres, and a list of matching track IDs (currently not displayed on the frontend).
 
 
 ## 5. Dependencies
 
-**Frontend (Next.js, located in `spotify-playlist-curator/package.json`):**
+**Frontend (`spotify-playlist-curator/package.json`):**
 
 * Next.js
 * Axios
 * Tailwind CSS
 * ... (other dependencies listed in `package.json`)
 
-**Backend (Python, located in `spotify-playlist-curator/lib/python/requirements.txt`):**
+**Backend (`spotify-playlist-curator/lib/python/requirements.txt`):**
 
 * FastAPI
 * uvicorn
@@ -123,5 +129,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 2. **Create a new branch:** `git checkout -b <feature_name>`
 3. **Make your changes** and commit them with descriptive messages.
 4. **Push** your branch: `git push origin <feature_name>`
-5. **Create a pull request** explaining your changes.  Adhere to the existing coding style, include thorough tests where applicable, and ensure the application remains fully functional.
-
+5. **Create a pull request** explaining your changes. Adhere to the existing coding style, include thorough tests where applicable, and ensure the application remains fully functional.  A well-written pull request description detailing the changes and their impact is highly appreciated.
