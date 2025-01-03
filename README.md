@@ -8,6 +8,14 @@ This project leverages Natural Language Processing (NLP) and the Spotify API to 
 </div>
 
 
+[Test](https://github.com/IslamTayeb/NLP-spotify/blob/main/spotify-playlist-curator/public/1735944055057-Afterglow.itermcolors)
+
+
+<div align="center">
+<img src="https://github.com/IslamTayeb/NLP-spotify/blob/main/spotify-playlist-curator/public/1735944076196-fumb-1.gif?raw=true" alt="1735944076196-fumb-1.gif" />
+</div>
+
+
 ## Features
 
 * **Secure Spotify Authentication:** Uses the Authorization Code Flow with PKCE for secure access to user Spotify accounts.  Access and refresh tokens are managed for persistent access.
