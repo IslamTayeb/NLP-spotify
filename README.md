@@ -160,25 +160,3 @@ This project needs Node.js (version 16 or higher recommended) and Python 3.10+. 
 *   NumPy
 *   google-generativeai
 *   python-dotenv
-
-
-
-## Contributing
-
-1.  Fork the repository.
-2.  Create a new branch: `git checkout -b <feature_name>`
-3.  Make changes and commit with descriptive messages.
-4.  Push your branch: `git push origin <feature_name>`
-5.  Create a pull request with a detailed explanation.
-
-
-
-## Testing
-
-This section should describe the testing strategy and the testing framework being used. Add details on running unit and/or integration tests if applicable.  Currently, no tests are included in the provided codebase.  Adding unit tests for the `analyzer.py` module would be a valuable contribution.
-
-
-
-## License
-
-[Specify your license here, e.g., MIT License]
