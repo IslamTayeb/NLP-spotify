@@ -3,19 +3,6 @@
 This project leverages Natural Language Processing (NLP) and the Spotify API to generate Spotify playlists based on a user's textual description of their desired mood and their existing liked songs. The application comprises a Next.js frontend and a FastAPI backend (Python). The backend utilizes the Google Gemini API for NLP tasks and a custom similarity algorithm to match user preferences with their liked tracks.  The frontend manages user authentication, data retrieval, and playlist generation initiation. The generated playlist is returned as JSON data but isn't yet visually displayed in the UI.
 
 
-<div align="center">
-<img src="https://github.com/IslamTayeb/NLP-spotify/blob/main/spotify-playlist-curator/public/image-1735943960358.png?raw=true" alt="image-1735943960358.png" />
-</div>
-
-
-[Test](https://github.com/IslamTayeb/NLP-spotify/blob/main/spotify-playlist-curator/public/1735944055057-Afterglow.itermcolors)
-
-
-<div align="center">
-<img src="https://github.com/IslamTayeb/NLP-spotify/blob/main/spotify-playlist-curator/public/1735944076196-fumb-1.gif?raw=true" alt="1735944076196-fumb-1.gif" />
-</div>
-
-
 ## Features
 
 * **Secure Spotify Authentication:** Uses the Authorization Code Flow with PKCE for secure access to user Spotify accounts.  Access and refresh tokens are managed for persistent access.
